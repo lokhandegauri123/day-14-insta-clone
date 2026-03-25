@@ -4,18 +4,18 @@ const postController = require("../controller/post.controller")
 const multer = require("multer")
 const upload = multer({storage : multer.memoryStorage()})
 // const userModel = require("../models/posts.model")
-
+const identifyUser = require("../middleware/auth.middleware")
 
 /**
  * req.body = {caption, img-file}
   
  * /api/posts/ 
  */
-postRouter.post("/",upload.single('image'),postController.createPostController)
+postRouter.post("/",upload.single('image'), identifyUser ,postController.createPostController)
 
-postRouter.get("/",postController.getPostController)
+postRouter.get("/", identifyUser ,postController.getPostController)
 
-postRouter.get("/details/:postId",postController.getPostDetailsController)
+postRouter.get("/details/:postId", identifyUser ,postController.getPostDetailsController)
 
 module.exports = postRouter
 
