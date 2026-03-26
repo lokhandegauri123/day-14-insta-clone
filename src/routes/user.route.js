@@ -8,5 +8,5 @@ const userController = require("../controller/user.controller")
     @access  private
  */
 userRouter.post("/follows/:username", identifyUser ,userController.followUserController)
-
+userRouter.post("/unfollows/:username", identifyUser , userController.unFollowUserController)
 module.exports = userRouter
