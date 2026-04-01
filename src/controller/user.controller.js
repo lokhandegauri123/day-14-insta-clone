@@ -69,7 +69,75 @@ async function unFollowUserController(req , res)
         message : `you have unfollowed ${followeeUsername}`
     })
 }
+async function acceptFollowRequest(req , res) {
+
+//   try{
+//     const followerId = req.params.userId     // who sent request
+//     console.log("another:" , followerId)
+
+//     const followeeId = req.user.id;        // logged-in user
+//     console.log("me :" , followeeId)
+
+
+//     const isUserExist =await followModel.findOneAndUpdate({
+//       follower : followerId,
+//       followee : followeeId
+//     },
+//   {
+//     status : "accepted"
+//   }) 
+
+//     if(!isUserExist){
+//       return res.status(404).json({
+//         message : "user not found"
+//       })
+//     }
+
+//     res.status(200).json({
+//       message : "status updates as accepted",
+//       status: "accepted"
+//     })
+//   }
+//   catch(err){
+//    console.log(err);
+// }
+  const followusername = req.params.username
+    const followeeusername = req.user.username
+    const { status } = req.body
+
+    if (!["accepted", "rejected"].includes(status)) {
+        return res.status(404).json({
+            message: "invalid status value"
+        })
+    }
+    const request = await followmodel.findOne({
+        follower: followusername,
+        followee: followeeusername
+    })
+
+    if (!request) {
+        return res.status(400).json({
+            message: "follow request is not found"
+        })
+    }
+
+
+    if (request.followee != req.user.username) {
+        return res.status(403).json({
+            message: "you are not authorized"
+        })
+    }
+
+    request.status = status
+    await request.save()
+
+    res.status(200).json({
+        message: `Request ${status} successfull`,
+        request
+    })
+}
 module.exports = {
   followUserController,
-  unFollowUserController
+  unFollowUserController,
+  acceptFollowRequest
 };
